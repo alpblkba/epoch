@@ -1,0 +1,39 @@
+config EPOCH_RX_ZEPHYR_RING_BUF
+	bool "Use Zephyr ring_buf instead of the EPOCH ring on the interrupt-driven receive path"
+	depends on UART_INTERRUPT_DRIVEN
+	select RING_BUFFER
+	help
+	  Compile-time comparator for isolating a suspected defect in the EPOCH ring. The EPOCH ring in core/src/ring.c stays the primary receive path.
+
+config EPOCH_RETENTION_PROBE
+	bool "Build the R1/R2 retained-memory probe instead of an echo"
+	select REBOOT
+	help
+	  Selected by retention.conf together with boards/retention.overlay.
+	  Reports reset flags, FLASH_OPTR and the R1 (SRAM1 noinit) and R2
+	  (backup SRAM) probe records over USART1 as text lines.
+
+config EPOCH_CONTROLLER_APP
+	bool "Build the EPOCH controller (EP0 and EP1 over the UART wire codec)"
+	select REBOOT
+	help
+	  Selected by controller.conf together with boards/retention.overlay,
+	  which enables the backup SRAM that holds the journal.
+
+config EPOCH_FAULT_TEST
+	bool "Test-only fault arming and diagnostic endpoint"
+	depends on EPOCH_CONTROLLER_APP
+	help
+	  Adds TEST_ARM and TEST_DIAG handling for reset-injection
+	  experiments. Selected by fault.conf; never part of a production image.
+
+config EPOCH_FAULT_CORRUPT
+	bool "Corrupted-slot image: forge mode 1 corrupts the newest committed slot"
+	depends on EPOCH_FAULT_TEST
+	help
+	  Selected by corrupt.conf for the dedicated corrupted-slot image
+	  only. TEST_ARM code 13 mode 1 then changes bit 0 of the counter
+	  word of the newest valid slot in place, instead of writing an
+	  equal-seq copy. The standard fault image is built without it.
+
+source "Kconfig.zephyr"

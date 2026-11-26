@@ -1,0 +1,4 @@
+/* Retained-memory backend R2: the 2 KiB backup SRAM (R2) is disabled in stm32u5.dtsi; enabling it lets the stm32_backup_sram driver turn on its clocks and backup-domain write access. */
+&backup_sram {
+	status = "okay";
+};
