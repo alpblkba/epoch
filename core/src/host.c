@@ -96,7 +96,7 @@ static void ep1_reply(struct epoch_host *h, const struct epoch_msg *m)
 {
     if (!h->req || m->session != h->req_session || m->txid != h->req_txid)
         return;
-    /* REJECTED_STALE answers one delivered copy. The host sends each txid once and in increasing order, so for its own newest txid the fence can only equal t because an earlier copy executed: it is not evidence of non-execution and settles nothing. */
+    // a REJECTED_STALE reply covers one delivery of this txid. An earlier copy may already have committed.
     if (m->ep1_status != EPOCH_EP1_COMMITTED)
         return;
     bool in_flight = h->req_outcome == EPOCH_OUTCOME_NONE;
